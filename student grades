@@ -1,0 +1,157 @@
+"""Grade Calculator
+Demonstrates conditional statements (if/elif/else) and functions.
+"""
+
+
+def get_grade(score):
+    """Return a letter grade for a score between 0 and 100."""
+    if score < 0 or score > 100:
+        return 'Invalid'
+    elif score >= 90:
+        return 'A'
+    elif score >= 80:
+        return 'B'
+    elif score >= 70:
+        return 'C'
+    elif score >= 60:
+        return 'D'
+    else:
+        return 'F'
+
+
+def get_remark(grade):
+    """Return a short comment for a letter grade."""
+    if grade == 'A':
+        return 'Excellent work!'
+    elif grade == 'B':
+        return 'Good job.'
+    elif grade == 'C':
+        return 'Satisfactory.'
+    elif grade == 'D':
+        return 'Needs improvement.'
+    elif grade == 'F':
+        return 'Failed. Keep practicing.'
+    else:
+        return 'Score must be between 0 and 100.'
+
+
+def is_passing(score):
+    """Return True if the score is 60 or above (and valid)."""
+    return 60 <= score <= 100
+
+
+def calculate_average(scores):
+    """Return the average of a list of scores, or None if the list is empty."""
+    if len(scores) == 0:
+        return None
+    return sum(scores) / len(scores)
+
+
+def get_score(prompt):
+    """Ask for a number. Returns None if the input is not a valid number."""
+    text = input(prompt)
+    try:
+        return float(text)
+    except ValueError:
+        print('Please enter a valid number.')
+        return None
+
+
+def main():
+    print('Grade Calculator')
+    print('Enter scores one at a time. Type "done" when finished.\n')
+
+    scores = []
+    while True:
+        text = input('Score (0-100) or "done": ').strip().lower()
+        if text == 'done':
+            break
+        try:
+            score = float(text)
+        except ValueError:
+            print('Please enter a valid number.')
+            continue
+
+        grade = get_grade(score)
+        if grade == 'Invalid':
+            print(get_remark(grade))
+        else:
+            scores.append(score)
+            status = 'Pass' if is_passing(score) else 'Fail'
+            print(f'Grade: {grade} | {status} | {get_remark(grade)}')
+
+    average = calculate_average(scores)
+    if average is None:
+        print('\nNo scores entered.')
+    else:
+        print(f'\nScores entered: {len(scores)}')
+        print(f'Average: {average:.1f}')
+        print(f'Overall grade: {get_grade(average)}')
+
+
+# ---------------------------------------------------------------
+# Tests (run with: python grade_calculator.py --test)
+# ---------------------------------------------------------------
+
+def test_grade_boundaries():
+    assert get_grade(100) == 'A'
+    assert get_grade(90) == 'A'
+    assert get_grade(89) == 'B'
+    assert get_grade(80) == 'B'
+    assert get_grade(79) == 'C'
+    assert get_grade(70) == 'C'
+    assert get_grade(69) == 'D'
+    assert get_grade(60) == 'D'
+    assert get_grade(59) == 'F'
+    assert get_grade(0) == 'F'
+
+
+def test_grade_invalid():
+    assert get_grade(-1) == 'Invalid'
+    assert get_grade(101) == 'Invalid'
+
+
+def test_remarks():
+    assert get_remark('A') == 'Excellent work!'
+    assert get_remark('F') == 'Failed. Keep practicing.'
+    assert get_remark('Invalid') == 'Score must be between 0 and 100.'
+
+
+def test_is_passing():
+    assert is_passing(60) is True
+    assert is_passing(59) is False
+    assert is_passing(100) is True
+    assert is_passing(101) is False
+
+
+def test_average():
+    assert calculate_average([80, 90, 100]) == 90
+    assert calculate_average([50]) == 50
+    assert calculate_average([]) is None
+
+
+def run_tests():
+    tests = [
+        test_grade_boundaries,
+        test_grade_invalid,
+        test_remarks,
+        test_is_passing,
+        test_average,
+    ]
+    passed = 0
+    for test in tests:
+        try:
+            test()
+            print(f'PASS  {test.__name__}')
+            passed += 1
+        except AssertionError:
+            print(f'FAIL  {test.__name__}')
+    print(f'\n{passed}/{len(tests)} tests passed')
+
+
+if __name__ == '__main__':
+    import sys
+    if '--test' in sys.argv:
+        run_tests()
+    else:
+        main()
